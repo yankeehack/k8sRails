@@ -1,0 +1,3 @@
+# fetch the keyword pod for log
+kubectl get pods | grep "rail*" | grep ".*Running.*" | awk '{print $1}'
+kubectl logs -f $(kubectl get pods | grep "rail*" | grep ".*Running.*" | awk '{print $1}')

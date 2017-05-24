@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rails
+  labels:
+    app: rails
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: rails
+  type: LoadBalancer
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rails.app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rails
+    spec:
+      containers:
+      - name: rails
+        image: rails:v1
+#Dev only hot reload from image
+        volumeMounts:
+        - name: reload
+          mountPath: /simple_cms
+        command:
+        - ./kubernetes/run_rails.sh
+        env:
+        - name: DB_HOST
+          value: "10.0.0.154"
+        - name: DB_PORT
+          value: "5432"
+        ports:
+          - containerPort: 8000
+      volumes:
+      - name: reload
+        hostPath:
+          path: /Users/yazhu/myProject/RubymineProjects/simple_cms
+#Dev only hot reload from image
